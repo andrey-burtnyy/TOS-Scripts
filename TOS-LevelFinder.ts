@@ -25,6 +25,8 @@ def sMinPrice = 20; # Min stock price
 def sMaxPrice = 135; # Max stock price
 def sGlobalTrendLength = 1; # Check for trend for N days. 1 = off
 def sLocalTrendEnable = 0; # Check for local trend. 0 = off, 1 = on
+def sDiff = 2; # Diff of the pre-last bar in cents;
+def sDiffForATRHigher = 1.5; # enable diff for ATR higher than X; 0 - for any.
 
 def highLevel;
 def lowLevel;
@@ -50,7 +52,8 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
     # SHORT
     if (sGlobalTrendLength <= 1 or trendGlobal < 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] <= open(period = "DAY")[0]) and # LOCAL TREND
-        high[1] == high[2] and high[0] <= high[1] {
+        (ATR >= sDiffForATRHigher and (high[2] - high[1] >=0 and high[2] - high[1] <= sDiff / 100) or high[2] == high[1]) and
+        high[0] <= high[1] {
         highLevel = fold i = 3 to barsCount + 1 with p = 0 while p <= 0 do
                     if (high[i] == high[1] or low[i] == high[1]) then high[1] else 0;
     } else {
@@ -60,7 +63,8 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
     # LONG
     if (sGlobalTrendLength <= 1 or trendGlobal > 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] >= open(period = "DAY")[0]) and # LOCAL TREND
-        low[1] == low[2] and low[0] >= low[1] {
+        (ATR >= sDiffForATRHigher and (low[1] - low[2] >= 0 and low[1] - low[2] <= sDiff / 100) or  low[1] == low[2]) and
+        low[0] >= low[1] {
         lowLevel = fold i2 = 3 to barsCount + 1 with p2 = 0 while p2 <= 0 do
                     if (low[i2] == low[1] or high[i2] == low[1]) then low[1] else 0;
     } else {
