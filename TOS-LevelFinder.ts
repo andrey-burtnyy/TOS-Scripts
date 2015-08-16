@@ -23,7 +23,7 @@ def sMaxATR = 5; # Max ATR
 def sMaxPassedATR = 80; # Max passed Current ATR; In %
 def sMinPrice = 20; # Min stock price
 def sMaxPrice = 135; # Max stock price
-def sGlobalTrendLength = 1; # Check for trend for N days. 0 = off
+def sGlobalTrendLength = 1; # Check for trend for N days. 1 = off
 def sLocalTrendEnable = 0; # Check for local trend. 0 = off, 1 = on
 
 def highLevel;
