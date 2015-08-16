@@ -10,7 +10,7 @@
 # Min/Max stock price
 # Min/Max ATR
 # Max passed current ATR. For example if ATR=1, MaxPassedATR=70, Current ATR can't be biggest then 0.7
-# Only to global trend direction on/off. Count of days. Default 12
+# Only to global trend direction on/off. Count of days. Default 12. 1 = off
 # Only to local trend direction on/off.
 #
 # Copyright 2015, Andrey Burtnyy (http://burtnyy.com)
@@ -23,8 +23,8 @@ def sMaxATR = 5; # Max ATR
 def sMaxPassedATR = 80; # Max passed Current ATR; In %
 def sMinPrice = 20; # Min stock price
 def sMaxPrice = 135; # Max stock price
-def sGlobalTrendLength = 12; # Check for trend for N days. 0 = off
-def sLocalTrendEnable = 1; # Check for local trend. 0 = off, 1 = on
+def sGlobalTrendLength = 1; # Check for trend for N days. 0 = off
+def sLocalTrendEnable = 0; # Check for local trend. 0 = off, 1 = on
 
 def highLevel;
 def lowLevel;
@@ -37,18 +37,18 @@ def timeframe = GetAggregationPeriod() / AggregationPeriod.MIN;
 def barsCount = (30 / timeframe) * 13; # Count of bars of 1 day
 
 # Trend
-def MA = if sGlobalTrendLength > 0 then
+def MA = if sGlobalTrendLength > 1 then
          MovingAverage(AverageType.SIMPLE, 
                         Fundamental(FundamentalType.CLOSE, period = AggregationPeriod.DAY),
                         sGlobalTrendLength
                         ) else 0;
-def trendGlobal = if sGlobalTrendLength > 0 then MA[1] - MA[sGlobalTrendLength] else 0;
+def trendGlobal = if sGlobalTrendLength > 1 then MA[1] - MA[sGlobalTrendLength] else 0;
 
 if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 100)) and
     (close[0] >= sMinPrice and close[0] <= sMaxPrice)) {
 
     # SHORT
-    if (sGlobalTrendLength == 0 or trendGlobal < 0) and # GLOBAL TREND
+    if (sGlobalTrendLength <= 1 or trendGlobal < 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] <= open(period = "DAY")[0]) and # LOCAL TREND
         high[1] == high[2] and high[0] <= high[1] {
         highLevel = fold i = 3 to barsCount + 1 with p = 0 while p <= 0 do
@@ -58,7 +58,7 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
     }
 
     # LONG
-    if (sGlobalTrendLength == 0 or trendGlobal > 0) and # GLOBAL TREND
+    if (sGlobalTrendLength <= 1 or trendGlobal > 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] >= open(period = "DAY")[0]) and # LOCAL TREND
         low[1] == low[2] and low[0] >= low[1] {
         lowLevel = fold i2 = 3 to barsCount + 1 with p2 = 0 while p2 <= 0 do
