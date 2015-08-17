@@ -12,6 +12,7 @@
 # Max passed current ATR. For example if ATR=1, MaxPassedATR=70, Current ATR can't be biggest then 0.7
 # Only to global trend direction on/off. Count of days. Default 12. 1 = off
 # Only to local trend direction on/off.
+# Diff; for ATR higher than X;
 #
 # Copyright 2015, Andrey Burtnyy (http://burtnyy.com)
 # Licensed under the GNU GPL Version 2.
@@ -52,7 +53,7 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
     # SHORT
     if (sGlobalTrendLength <= 1 or trendGlobal < 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] <= open(period = "DAY")[0]) and # LOCAL TREND
-        (ATR >= sDiffForATRHigher and (high[2] - high[1] >=0 and high[2] - high[1] <= sDiff / 100) or high[2] == high[1]) and
+        ((ATR >= sDiffForATRHigher and (high[2] - high[1] >=0 and high[2] - high[1] <= sDiff / 100)) or high[2] == high[1]) and
         high[0] <= high[1] {
         highLevel = fold i = 3 to barsCount + 1 with p = 0 while p <= 0 do
                     if (high[i] == high[1] or low[i] == high[1]) then high[1] else 0;
@@ -63,7 +64,7 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
     # LONG
     if (sGlobalTrendLength <= 1 or trendGlobal > 0) and # GLOBAL TREND
         (sLocalTrendEnable == 0 or close[0] >= open(period = "DAY")[0]) and # LOCAL TREND
-        (ATR >= sDiffForATRHigher and (low[1] - low[2] >= 0 and low[1] - low[2] <= sDiff / 100) or  low[1] == low[2]) and
+        ((ATR >= sDiffForATRHigher and (low[1] - low[2] >= 0 and low[1] - low[2] <= sDiff / 100)) or  low[1] == low[2]) and
         low[0] >= low[1] {
         lowLevel = fold i2 = 3 to barsCount + 1 with p2 = 0 while p2 <= 0 do
                     if (low[i2] == low[1] or high[i2] == low[1]) then low[1] else 0;
