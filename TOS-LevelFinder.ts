@@ -56,7 +56,7 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
         ((ATR >= sDiffForATRHigher and (high[2] - high[1] >=0 and high[2] - high[1] <= sDiff / 100)) or high[2] == high[1]) and
         high[0] <= high[1] {
         highLevel = fold i = 3 to barsCount + 1 with p = 0 while p <= 0 do
-                    if (high[i] == high[1] or low[i] == high[1]) then high[1] else 0;
+                    if (high[i] == high[2] or low[i] == high[2]) then high[2] else 0;
     } else {
         highLevel = 0;
     }
@@ -67,7 +67,7 @@ if ((ATR >= sMinATR and ATR <= sMaxATR and currentATR <= (ATR * sMaxPassedATR / 
         ((ATR >= sDiffForATRHigher and (low[1] - low[2] >= 0 and low[1] - low[2] <= sDiff / 100)) or  low[1] == low[2]) and
         low[0] >= low[1] {
         lowLevel = fold i2 = 3 to barsCount + 1 with p2 = 0 while p2 <= 0 do
-                    if (low[i2] == low[1] or high[i2] == low[1]) then low[1] else 0;
+                    if (low[i2] == low[2] or high[i2] == low[2]) then low[2] else 0;
     } else {
         lowLevel = 0;
     }
